@@ -15,14 +15,6 @@ const todos = [{
     completed: true
 }]
 
-/* const r = document.querySelectorAll('p')
-r.forEach(function(paragraph){
-    if(paragraph.textContent.includes('the')){
-       //paragraph.remove()
-        paragraph.textContent = '******'
-    }
-}) */
-
 const incompleteTodos = todos.filter(function(todo) {
     return !todo.completed
 })
