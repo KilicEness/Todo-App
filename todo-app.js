@@ -21,7 +21,7 @@ const filters = {
 }
 
 const renderTodos = function (todos, filters) {
-    const filteredTodos = todos.filter(function () {
+    const filteredTodos = todos.filter(function (todo) {
         return todo.text.toLowerCase().includes(filters.searchText.toLowerCase())
     })
 
@@ -46,17 +46,17 @@ const renderTodos = function (todos, filters) {
 
 renderTodos(todos, filters)
 
-//Listen for todo creation
-document.querySelector('#add-todo').addEventListener('click', function (e) {
-    e.target.textContent = 'Clicked for add'
-})
-
-//Listen for todo text change
-document.querySelector('#new-todo').addEventListener('input', function (e) {
-    console.log(e.target.value)
-})
-
 document.querySelector('#search-text').addEventListener('input', function (e) {
     filters.searchText = e.target.value
     renderTodos(todos, filters)
+})
+
+document.querySelector('#new-todo').addEventListener('submit', function(e){
+    e.preventDefault()
+    todos.push({
+        text: e.target.elements.text.value,
+        completed: false
+    })
+    renderTodos(todos, filters) // virgül yerine nokta kullanmışım uğraştırdı xd
+    e.target.elements.text.value = ''
 })
