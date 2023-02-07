@@ -1,28 +1,50 @@
-//Fetch existing todos from localStorage
+// Fetch existing todos from localStorage
 const getSavedTodos = function () {
     const todosJSON = localStorage.getItem('todos')
 
-    if(todosJSON !== null) {
+    if (todosJSON !== null) {
         return JSON.parse(todosJSON)
-    }else{
+    } else {
         return []
     }
 }
-//Save todos to localStorage
+
+// Save todos to localStorage
 const saveTodos = function (todos) {
     localStorage.setItem('todos', JSON.stringify(todos))
 }
 
-//Render application todos based on filters
+// Remove todo by id
+const removeTodo = function (id) {
+    const todoIndex = todos.findIndex(function (todo) {
+        return todo.id === id
+    })
+
+    if (todoIndex > -1) {
+        todos.splice(todoIndex, 1)
+    }
+}
+
+//Toggle the completed value for a given todo
+const toggleTodo = function (id) {
+    const todo = todos.find(function (todo) {
+        return todo.id === id
+    })
+
+    if (todo !== undefined){
+        todo.completed = !todo.completed
+    }
+}
+
+// Render application todos based on filters
 const renderTodos = function (todos, filters) {
     const filteredTodos = todos.filter(function (todo) {
         const searchTextMatch = todo.text.toLowerCase().includes(filters.searchText.toLowerCase())
         const hideCompletedMatch = !filters.hideCompleted || !todo.completed
-
+        
         return searchTextMatch && hideCompletedMatch
     })
 
-    //show incompleted todos
     const incompleteTodos = filteredTodos.filter(function (todo) {
         return !todo.completed
     })
@@ -30,7 +52,6 @@ const renderTodos = function (todos, filters) {
     document.querySelector('#todos').innerHTML = ''
     document.querySelector('#todos').appendChild(generateSummaryDOM(incompleteTodos))
 
-    //show todos
     filteredTodos.forEach(function (todo) {
         document.querySelector('#todos').appendChild(generateTodoDOM(todo))
     })
@@ -45,15 +66,27 @@ const generateTodoDOM = function (todo) {
 
     // Setup todo checkbox
     checkbox.setAttribute('type', 'checkbox')
+    checkbox.checked = todo.completed
     todoEl.appendChild(checkbox)
+    checkbox.addEventListener('change', function() {
+        toggleTodo(todo.id)
+        saveTodos(todos)
+        renderTodos(todos, filters)
+    })
 
     // Setup the todo text
     todoText.textContent = todo.text
     todoEl.appendChild(todoText)
 
+
     // Setup the remove button
     removeButton.textContent = 'x'
     todoEl.appendChild(removeButton)
+    removeButton.addEventListener('click', function () {
+        removeTodo(todo.id)
+        saveTodos(todos)
+        renderTodos(todos, filters)
+    })
 
     return todoEl
 }
@@ -64,3 +97,11 @@ const generateSummaryDOM = function (incompleteTodos) {
     summary.textContent = `You have ${incompleteTodos.length} todos left`
     return summary
 }
+
+//uuid random id function
+const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
