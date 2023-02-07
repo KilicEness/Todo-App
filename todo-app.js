@@ -1,42 +1,9 @@
-let todos = []
+let todos = getSavedTodos()
 
 //filter search, searching words
 const filters = {
     searchText: '',
     hideCompleted: false
-}
-
-const todosJSON = localStorage.getItem('todos')
-
-if(todosJSON !== null) {
-    todos = JSON.parse(todosJSON)
-}
-
-const renderTodos = function (todos, filters) {
-    const filteredTodos = todos.filter(function (todo) {
-        const searchTextMatch = todo.text.toLowerCase().includes(filters.searchText.toLowerCase())
-        const hideCompletedMatch = !filters.hideCompleted || !todo.completed
-
-        return searchTextMatch && hideCompletedMatch
-    })
-
-    //show incompleted todos
-    const incompleteTodos = filteredTodos.filter(function (todo) {
-        return !todo.completed
-    })
-
-    document.querySelector('#todos').innerHTML = ''
-
-    const summary = document.createElement('h2')
-    summary.textContent = `you have ${incompleteTodos.length} todos left`
-    document.querySelector('#todos').appendChild(summary)
-
-    //show todos
-    filteredTodos.forEach(function (todo) {
-        const p = document.createElement('p')
-        p.textContent = todo.text
-        document.querySelector('#todos').appendChild(p)
-    })
 }
 
 renderTodos(todos, filters)
@@ -52,7 +19,7 @@ document.querySelector('#new-todo').addEventListener('submit', function (e) {
         text: e.target.elements.text.value,
         completed: false
     })
-    localStorage.setItem('todos', JSON.stringify(todos))
+    saveTodos(todos)
     renderTodos(todos, filters) // virgül yerine nokta kullanmışım uğraştırdı xd
     e.target.elements.text.value = ''
 })
